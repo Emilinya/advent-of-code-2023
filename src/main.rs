@@ -30,4 +30,4 @@ macro_rules! create_main {
     };
 }
 
-create_main!(1: d1, 2: d2, 3: d3, 4: d4, 5: d5, 6: d6, 7: d7, 8: d8);
+create_main!(1: d1, 2: d2, 3: d3, 4: d4, 5: d5, 6: d6, 7: d7, 8: d8, 9: d9);
