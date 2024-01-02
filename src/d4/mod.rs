@@ -4,27 +4,23 @@ use std::{collections::HashSet, time::Instant};
 use crate::utils;
 
 fn capture_to_set(index: usize, capture: &Captures, line: &str) -> HashSet<u32> {
-    HashSet::from_iter(
+    HashSet::from_iter(utils::string_to_iter(
         capture
             .get(index)
-            .expect(&format!(
-                "capture {} does not exist for line {}!",
-                index, line
-            ))
-            .as_str()
-            .split(" ")
-            .filter(|s| *s != "")
-            .map(|s| s.parse().expect(&format!("got non-int: {}!", s))),
-    )
+            .unwrap_or_else(|| panic!("capture {} does not exist for line {}!", index, line))
+            .as_str(),
+        " ",
+        0,
+    ))
 }
 
 fn get_winning_count(line: &str, regex: &Regex) -> u32 {
     let captures = regex
-        .captures(&line)
-        .expect(&format!("got no captures for line {}!", line));
+        .captures(line)
+        .unwrap_or_else(|| panic!("got no captures for line {}!", line));
 
-    let winners = capture_to_set(1, &captures, &line);
-    let numbers = capture_to_set(2, &captures, &line);
+    let winners = capture_to_set(1, &captures, line);
+    let numbers = capture_to_set(2, &captures, line);
 
     numbers.intersection(&winners).count() as u32
 }
@@ -49,7 +45,7 @@ fn get_card_count(filename: &str) -> u32 {
     let mut card_numbers = vec![1_u32; lines.len()];
 
     for (i, line) in lines.iter().enumerate() {
-        let winning_count = get_winning_count(&line, &number_regex);
+        let winning_count = get_winning_count(line, &number_regex);
 
         for j in 1..(winning_count as usize + 1) {
             card_numbers[i + j] += card_numbers[i]
@@ -62,6 +58,11 @@ fn get_card_count(filename: &str) -> u32 {
 fn test() {
     assert_eq!(get_point_sum("src/d4/test_input.dat"), 13);
     assert_eq!(get_card_count("src/d4/test_input.dat"), 30);
+}
+
+pub fn test_final() {
+    assert_eq!(get_point_sum("src/d4/full_input.dat"), 15205);
+    assert_eq!(get_card_count("src/d4/full_input.dat"), 6189740);
 }
 
 pub fn main() {

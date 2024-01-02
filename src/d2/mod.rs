@@ -7,9 +7,9 @@ use crate::utils;
 
 fn is_possible(line: &str, regex: &Regex, max_map: &HashMap<&str, u32>) -> bool {
     for count_and_color in regex
-        .captures_iter(&line)
+        .captures_iter(line)
         .flat_map(|c| c.get(0).unwrap().as_str().split(", "))
-        .map(|v| v.split(" ").collect::<Vec<&str>>())
+        .map(|v| v.split(' ').collect::<Vec<&str>>())
     {
         match count_and_color[..] {
             [count_str, color] => {
@@ -21,15 +21,15 @@ fn is_possible(line: &str, regex: &Regex, max_map: &HashMap<&str, u32>) -> bool 
         }
     }
 
-    return true;
+    true
 }
 
 fn get_min_possible(line: &str, regex: &Regex) -> HashMap<String, u32> {
     let mut map = HashMap::new();
     for count_and_color in regex
-        .captures_iter(&line)
+        .captures_iter(line)
         .flat_map(|c| c.get(0).unwrap().as_str().split(", "))
-        .map(|v| v.split(" ").collect::<Vec<&str>>())
+        .map(|v| v.split(' ').collect::<Vec<&str>>())
     {
         match count_and_color[..] {
             [count_str, color] => {
@@ -43,7 +43,7 @@ fn get_min_possible(line: &str, regex: &Regex) -> HashMap<String, u32> {
         }
     }
 
-    return map;
+    map
 }
 
 fn count_possible(filename: &str) -> u32 {
@@ -84,6 +84,11 @@ fn get_power_sum(filename: &str) -> u32 {
 fn test() {
     assert_eq!(count_possible("src/d2/test_input.dat"), 8);
     assert_eq!(get_power_sum("src/d2/test_input.dat"), 2286);
+}
+
+pub fn test_final() {
+    assert_eq!(count_possible("src/d2/full_input.dat"), 2505);
+    assert_eq!(get_power_sum("src/d2/full_input.dat"), 70265);
 }
 
 pub fn main() {

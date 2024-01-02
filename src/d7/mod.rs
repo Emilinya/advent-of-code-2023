@@ -140,13 +140,13 @@ impl Hand {
 
 fn get_total_winnings(filename: &str, use_joker: bool) -> u32 {
     let mut hands: Vec<Hand> = utils::read_lines(filename)
-        .map(|line| match line.split(" ").collect::<Vec<&str>>()[..] {
+        .map(|line| match line.split(' ').collect::<Vec<&str>>()[..] {
             [hand, bet_str] => Hand::new(
                 hand,
                 use_joker,
                 bet_str
                     .parse::<u32>()
-                    .expect(&format!("malformed bet_str: {}", bet_str)),
+                    .unwrap_or_else(|_| panic!("malformed bet_str: {}", bet_str)),
             ),
             _ => panic!("malformed line: {:?}", line),
         })
@@ -164,6 +164,11 @@ fn get_total_winnings(filename: &str, use_joker: bool) -> u32 {
 fn test() {
     assert_eq!(get_total_winnings("src/d7/test_input.dat", false), 6440);
     assert_eq!(get_total_winnings("src/d7/test_input.dat", true), 5905);
+}
+
+pub fn test_final() {
+    assert_eq!(get_total_winnings("src/d7/full_input.dat", false), 251136060);
+    assert_eq!(get_total_winnings("src/d7/full_input.dat", true), 249400220);
 }
 
 pub fn main() {

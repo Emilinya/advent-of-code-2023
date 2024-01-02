@@ -3,7 +3,7 @@ use std::time::Instant;
 
 use crate::utils;
 
-fn get_key_map(lines: &Vec<String>) -> HashMap<String, (String, String)> {
+fn get_key_map(lines: &[String]) -> HashMap<String, (String, String)> {
     let mut map: HashMap<String, (String, String)> = HashMap::new();
 
     for line in lines.iter().skip(2) {
@@ -29,7 +29,7 @@ fn get_key_map(lines: &Vec<String>) -> HashMap<String, (String, String)> {
 fn step_key(key: &mut String, step: &char, map: &HashMap<String, (String, String)>) {
     let (left, right) = map
         .get(key)
-        .expect(&format!("Map does not contain key {:?}!", key));
+        .unwrap_or_else(|| panic!("Map does not contain key {:?}!", key));
     match step {
         'L' => *key = left.to_owned(),
         'R' => *key = right.to_owned(),
@@ -115,6 +115,11 @@ fn count_multi_steps(filename: &str) -> u64 {
 fn test() {
     assert_eq!(count_steps("src/d8/test_input_p1.dat"), 6);
     assert_eq!(count_multi_steps("src/d8/test_input_p2.dat"), 6);
+}
+
+pub fn test_final() {
+    assert_eq!(count_steps("src/d8/full_input.dat"), 16897);
+    assert_eq!(count_multi_steps("src/d8/full_input.dat"), 16563603485021);
 }
 
 pub fn main() {

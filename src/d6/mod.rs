@@ -32,7 +32,7 @@ fn unkernel(line: &str) -> u64 {
         .join("");
     number_str
         .parse()
-        .expect(&format!("Could not parse string: {:?}", number_str))
+        .unwrap_or_else(|_| panic!("Could not parse string: {:?}", number_str))
 }
 
 fn get_long_win_count(filename: &str) -> u64 {
@@ -47,6 +47,11 @@ fn get_long_win_count(filename: &str) -> u64 {
 fn test() {
     assert_eq!(get_win_prod("src/d6/test_input.dat"), 288);
     assert_eq!(get_long_win_count("src/d6/test_input.dat"), 71503);
+}
+
+pub fn test_final() {
+    assert_eq!(get_win_prod("src/d6/full_input.dat"), 114400);
+    assert_eq!(get_long_win_count("src/d6/full_input.dat"), 21039729);
 }
 
 pub fn main() {

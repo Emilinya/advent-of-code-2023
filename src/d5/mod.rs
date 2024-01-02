@@ -72,7 +72,7 @@ fn get_map_pipe(lines: &Vec<String>) -> MapPipe {
     let line_indecies: Vec<usize> = lines
         .iter()
         .enumerate()
-        .filter_map(|(i, line)| if *line == "" { Some(i + 1) } else { None })
+        .filter_map(|(i, line)| if line.is_empty() { Some(i + 1) } else { None })
         .collect();
 
     let mut map_pipe = MapPipe::new();
@@ -102,7 +102,7 @@ fn get_min_location(filename: &str) -> u64 {
     utils::string_to_iter(
         lines[0]
             .get(7..)
-            .expect(&format!("Could not get 7.. from line 0: {}", lines[0])),
+            .unwrap_or_else(|| panic!("Could not get 7.. from line 0: {}", lines[0])),
         " ",
         0,
     )
@@ -119,7 +119,7 @@ fn get_true_min_location(filename: &str) -> u64 {
     utils::string_to_array(
         lines[0]
             .get(7..)
-            .expect(&format!("Could not get 7.. from line 0: {}", lines[0])),
+            .unwrap_or_else(|| panic!("Could not get 7.. from line 0: {}", lines[0])),
         " ",
         0,
     )
@@ -141,14 +141,19 @@ fn test() {
     assert_eq!(get_true_min_location("src/d5/test_input.dat"), 46);
 }
 
+pub fn test_final() {
+    assert_eq!(get_min_location("src/d5/full_input.dat"), 806029445);
+    // assert_eq!(get_true_min_location("src/d5/full_input.dat"), 59370573);
+}
+
 pub fn main() {
     test();
 
-    let mut now = Instant::now();
+    let now = Instant::now();
     let sum_p1 = get_min_location("src/d5/full_input.dat");
     println!("Part one result: {} (took {:?})", sum_p1, now.elapsed());
 
-    now = Instant::now();
-    let sum_p2 = get_true_min_location("src/d5/full_input.dat");
-    println!("Part two result: {} (took {:?})", sum_p2, now.elapsed());
+    // now = Instant::now();
+    // let sum_p2 = get_true_min_location("src/d5/full_input.dat");
+    // println!("Part two result: {} (took {:?})", sum_p2, now.elapsed());
 }

@@ -24,11 +24,11 @@ where
 {
     string
         .split(pattern)
-        .filter(|c| *c != "")
+        .filter(|c| !c.is_empty())
         .skip(skip)
         .map(|c| {
             c.parse()
-                .expect(&format!("Could not parse string: {:?}", c))
+                .unwrap_or_else(|_| panic!("Could not parse string: {:?}", c))
         })
 }
 

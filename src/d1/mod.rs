@@ -5,12 +5,12 @@ use crate::utils;
 fn find_num<'a, T: Iterator<Item = &'a u8>>(bytes: T) -> Option<u8> {
     for byte in bytes {
         let num = *byte;
-        if num >= b'0' && num <= b'9' {
+        if num.is_ascii_digit() {
             return Some(num - b'0');
         }
     }
 
-    return None;
+    None
 }
 
 fn get_sum_p1(filename: &str) -> u32 {
@@ -92,6 +92,11 @@ fn get_sum_p2(filename: &str) -> u32 {
 fn test() {
     assert_eq!(get_sum_p1("src/d1/test_input_p1.dat"), 142);
     assert_eq!(get_sum_p2("src/d1/test_input_p2.dat"), 281);
+}
+
+pub fn test_final() {
+    assert_eq!(get_sum_p1("src/d1/full_input.dat"), 54968);
+    assert_eq!(get_sum_p2("src/d1/full_input.dat"), 54094);
 }
 
 pub fn main() {

@@ -10,7 +10,7 @@ struct PartNumber {
     range: (usize, usize),
 }
 
-fn get_part_numbers(lines: &Vec<String>) -> Vec<PartNumber> {
+fn get_part_numbers(lines: &[String]) -> Vec<PartNumber> {
     let number_re = Regex::new(r"\d+").unwrap();
     lines
         .iter()
@@ -28,7 +28,7 @@ fn get_part_numbers(lines: &Vec<String>) -> Vec<PartNumber> {
         .collect()
 }
 
-fn cmp_sides(part_number: &PartNumber, lines: &Vec<String>, rows: usize, offset: usize) -> bool {
+fn cmp_sides(part_number: &PartNumber, lines: &[String], rows: usize, offset: usize) -> bool {
     if lines[part_number.row].as_bytes()[offset] != b'.' {
         return true;
     }
@@ -92,7 +92,7 @@ fn get_part_sum(filename: &str) -> u32 {
 
 fn get_side_index(
     part_number: &PartNumber,
-    lines: &Vec<String>,
+    lines: &[String],
     rows: usize,
     offset: usize,
 ) -> Option<(usize, usize)> {
@@ -182,10 +182,9 @@ fn get_ratio_sum(filename: &str) -> u32 {
 
     let mut ratio_sum = 0;
     for numbers in gears.values() {
-        match numbers[..] {
-            [a, b] => ratio_sum += a * b,
-            _ => {}
-        }
+        if let [a, b] = numbers[..] {
+            ratio_sum += a * b
+        };
     }
     ratio_sum
 }
@@ -193,6 +192,11 @@ fn get_ratio_sum(filename: &str) -> u32 {
 fn test() {
     assert_eq!(get_part_sum("src/d3/test_input.dat"), 4361);
     assert_eq!(get_ratio_sum("src/d3/test_input.dat"), 467835);
+}
+
+pub fn test_final() {
+    assert_eq!(get_part_sum("src/d3/full_input.dat"), 536576);
+    assert_eq!(get_ratio_sum("src/d3/full_input.dat"), 75741499);
 }
 
 pub fn main() {
