@@ -1,3 +1,4 @@
+use indicatif::{ProgressIterator, ProgressStyle};
 use std::time::Instant;
 
 use crate::utils;
@@ -67,9 +68,7 @@ impl MapPipe {
     }
 }
 
-fn get_min_location(filename: &str) -> u64 {
-    let lines: Vec<String> = utils::read_lines(filename).collect();
-
+fn get_map_pipe(lines: &Vec<String>) -> MapPipe {
     let line_indecies: Vec<usize> = lines
         .iter()
         .enumerate()
@@ -92,6 +91,14 @@ fn get_min_location(filename: &str) -> u64 {
         }
     }
 
+    map_pipe
+}
+
+fn get_min_location(filename: &str) -> u64 {
+    let lines: Vec<String> = utils::read_lines(filename).collect();
+
+    let map_pipe = get_map_pipe(&lines);
+
     utils::string_to_iter(
         lines[0]
             .get(7..)
@@ -103,19 +110,43 @@ fn get_min_location(filename: &str) -> u64 {
     .expect("location list is empty!?")
 }
 
+fn get_true_min_location(filename: &str) -> u64 {
+    let lines: Vec<String> = utils::read_lines(filename).collect();
+
+    let map_pipe = get_map_pipe(&lines);
+
+    utils::string_to_array(
+        lines[0]
+            .get(7..)
+            .expect(&format!("Could not get 7.. from line 0: {}", lines[0])),
+        " ",
+    )
+    .chunks(2)
+    .progress_with_style(
+        ProgressStyle::with_template("{wide_bar} {pos}/{len} [{elapsed} : {eta}] ").unwrap(),
+    )
+    .flat_map(|v| match v {
+        [start, range] => (*start)..(start + range),
+        _ => panic!("what? {:?}", v),
+    })
+    .map(|seed| map_pipe.map(seed))
+    .min()
+    .expect("location list is empty!?")
+}
+
 fn test() {
     assert_eq!(get_min_location("src/d5/test_input.dat"), 35);
-    // assert_eq!(get_card_count("src/d5/test_input.dat"), 30);
+    assert_eq!(get_true_min_location("src/d5/test_input.dat"), 46);
 }
 
 pub fn main() {
     test();
 
-    let now = Instant::now();
+    let mut now = Instant::now();
     let sum_p1 = get_min_location("src/d5/full_input.dat");
     println!("Part one result: {} (took {:?})", sum_p1, now.elapsed());
 
-    // now = Instant::now();
-    // let sum_p2 = get_card_count("src/d5/full_input.dat");
-    // println!("Part two result: {} (took {:?})", sum_p2, now.elapsed());
+    now = Instant::now();
+    let sum_p2 = get_true_min_location("src/d5/full_input.dat");
+    println!("Part two result: {} (took {:?})", sum_p2, now.elapsed());
 }
