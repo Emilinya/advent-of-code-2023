@@ -10,23 +10,35 @@ pub fn read_lines<T: AsRef<Path>>(filename: T) -> Flatten<std::io::Lines<BufRead
     BufReader::new(file).lines().flatten()
 }
 
+/// Creates an iterator that iterates over the parsed values in a string.
+/// String is split using 'pattern', and the first 'skip' values are skipped
+/// before parsing.
 pub fn string_to_iter<'a, T>(
     string: &'a str,
-    split_pattern: &'a str,
+    pattern: &'a str,
+    skip: usize,
 ) -> impl Iterator<Item = T> + 'a
 where
     T: FromStr,
     <T as FromStr>::Err: Debug,
 {
     string
-        .split(split_pattern)
-        .map(|c| c.parse().expect(&format!("Could not parse string: {}", c)))
+        .split(pattern)
+        .filter(|c| *c != "")
+        .skip(skip)
+        .map(|c| {
+            c.parse()
+                .expect(&format!("Could not parse string: {:?}", c))
+        })
 }
 
-pub fn string_to_array<T>(string: &str, split_pattern: &str) -> Vec<T>
+/// Creates a vector that contains the parsed values in a string.
+/// String is split using 'pattern', and the first 'skip' values are skipped
+/// before parsing.
+pub fn string_to_array<T>(string: &str, pattern: &str, skip: usize) -> Vec<T>
 where
     T: FromStr,
     <T as FromStr>::Err: Debug,
 {
-    string_to_iter(string, split_pattern).collect()
+    string_to_iter(string, pattern, skip).collect()
 }

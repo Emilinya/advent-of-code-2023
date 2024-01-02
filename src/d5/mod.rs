@@ -19,7 +19,7 @@ struct MapPipe {
 
 impl WackyMapPart {
     fn from_string(string: &str) -> Self {
-        match utils::string_to_array(string, " ")[..] {
+        match utils::string_to_array(string, " ", 0)[..] {
             [a, b, c] => WackyMapPart {
                 destination_range_start: a,
                 source_range_start: b,
@@ -104,6 +104,7 @@ fn get_min_location(filename: &str) -> u64 {
             .get(7..)
             .expect(&format!("Could not get 7.. from line 0: {}", lines[0])),
         " ",
+        0,
     )
     .map(|seed| map_pipe.map(seed))
     .min()
@@ -120,6 +121,7 @@ fn get_true_min_location(filename: &str) -> u64 {
             .get(7..)
             .expect(&format!("Could not get 7.. from line 0: {}", lines[0])),
         " ",
+        0,
     )
     .chunks(2)
     .progress_with_style(
